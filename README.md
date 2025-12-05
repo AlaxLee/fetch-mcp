@@ -6,7 +6,7 @@
 
 本工程参考并致敬原项目 zcaceres/fetch（作者 Zach Caceres），并感谢贡献者 Piotr Wilkin；在其基础上进行精简与改造，仅保留渲染后 HTML 抓取工具。
 
-[NPM](https://www.npmjs.com/package/mcp-fetch-server)
+[NPM](https://www.npmjs.com/package/@alaxlee/mcp-rendered-fetch-server)
 
 <a href="https://glama.ai/mcp/servers/nu09wf23ao">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/nu09wf23ao/badge" alt="Fetch Server MCP server" />
@@ -51,7 +51,7 @@
   "mcpServers": {
     "fetch": {
       "command": "npx",
-      "args": ["mcp-fetch-server"],
+      "args": ["@alaxlee/mcp-rendered-fetch-server"],
       "env": {
         "DEFAULT_LIMIT": "50000"
       }

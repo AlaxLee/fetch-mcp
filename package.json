@@ -1,9 +1,9 @@
 {
-  "name": "mcp-fetch-server",
-  "version": "1.0.2",
+  "name": "@alaxlee/mcp-rendered-fetch-server",
+  "version": "1.0.0",
   "description": "An MCP server that returns JS-rendered HTML via Playwright (inspired by zcaceres)",
   "type": "module",
-  "main": "index.js",
+  "main": "dist/index.js",
   "license": "MIT",
   "author": "alax",
   "contributors": [
@@ -15,10 +15,22 @@
     "prepare": "npm run build",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "npx playwright install"
   },
   "bin": {
-    "mcp-fetch-server": "dist/index.js"
+    "mcp-rendered-fetch-server": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [],
   "dependencies": {
