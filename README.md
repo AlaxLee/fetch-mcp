@@ -23,7 +23,7 @@
     - `start_index`（number，可选）：从该字符索引开始返回内容，默认 `0`
     - `wait_ms`（number，可选）：页面加载完成后额外等待的毫秒数，用于等待客户端渲染，默认 `2000`
     - `simplify`（boolean，可选）：是否启用精简模式，默认 `false`
-- `include_iframes`（boolean，可选）：是否将每个 `<iframe>` 的页面 HTML 直接写入最终 HTML 中对应的 `<iframe>` 标签内部（不改动 `src/srcdoc`），以便一次性查看完整页面。跨域 `iframe` 也支持。若子页面指向私网地址，则不抓取真实内容，改为在标签内部写入占位文本。默认 `false`
+    - `include_iframes`（boolean，可选）：是否将每个 `<iframe>` 的页面 HTML 直接写入最终 HTML 中对应的 `<iframe>` 标签内部（不改动 `src/srcdoc`），以便一次性查看完整页面。跨域 `iframe` 也支持。若子页面指向私网地址，则不抓取真实内容，改为在标签内部写入占位文本。默认 `false`
   - 返回：`{ content: [{ type: "text", text: "<html>...</html>" }], isError: false }`
 
 ## 安全
