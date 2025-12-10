@@ -23,6 +23,7 @@
     - `start_index`（number，可选）：从该字符索引开始返回内容，默认 `0`
     - `wait_ms`（number，可选）：页面加载完成后额外等待的毫秒数，用于等待客户端渲染，默认 `2000`
     - `simplify`（boolean，可选）：是否启用精简模式，默认 `false`
+    - `include_iframes`（boolean，可选）：是否将子 frame 的 HTML 内联到对应 `<iframe>` 元素（通过 `srcdoc`），并移除其 `src`；私网 frame 内容会阻断并打标
   - 返回：`{ content: [{ type: "text", text: "<html>...</html>" }], isError: false }`
 
 ## 安全
@@ -49,6 +50,7 @@
   "arguments": {
     "url": "https://example.com",
     "simplify": true,
+    "include_iframes": true,
     "wait_ms": 2000,
     "max_length": 50000,
     "start_index": 0
@@ -85,6 +87,7 @@
 - 使用 Playwright 的 Chromium 渲染并返回页面 HTML
 - 支持自定义请求头、长度与起始位置控制、渲染后额外等待（`wait_ms`）
 - 可选精简模式：截断脚本、样式与超长属性值，降低返回体大小
+- 可选 iframe 内联：为每个子 frame 设置 `srcdoc` 并移除 `src`
 - 阻止私有 IP 访问，提升安全性
 
 ## 精简模式说明（`simplify: true`）
@@ -96,6 +99,12 @@
 - 所有元素的属性值长度超过 1000 时，仅保留前 100 个字符，后面追加 `...后续已忽略`
 
 精简在渲染完成与额外等待（`wait_ms`）之后执行，随后再获取页面内容并应用 `max_length` 与 `start_index` 截断。
+
+## iframe 内容内联说明（`include_iframes: true`）
+
+- 遍历所有子 frame，获取其 HTML 并将内容写入对应 `<iframe>` 的 `srcdoc`，同时移除 `src`
+- 私网地址的 frame 不会内联其真实内容，改为设置 `srcdoc="[Blocked private IP content]"`，并在元素上标记 `data-private-src-blocked="true"`
+- 若启用精简模式，子 frame 内也会进行脚本、样式与长属性值的截断
 
 ## 依赖与浏览器安装提示
 
