@@ -43,6 +43,13 @@ export class Fetcher {
               el.textContent = t.slice(0, 100) + SUFFIX;
             }
           });
+          // Truncate inline style content to 100 characters
+          document.querySelectorAll("style").forEach((el) => {
+            const t = el.textContent || "";
+            if (t.length > 100) {
+              el.textContent = t.slice(0, 100) + SUFFIX;
+            }
+          });
           // Truncate attribute values longer than 1000 characters to 100 characters
           document.querySelectorAll("*").forEach((el) => {
             const attrs = (el as Element).attributes;
