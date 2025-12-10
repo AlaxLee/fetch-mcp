@@ -103,13 +103,9 @@ export class Fetcher {
           const htmlString = blocked ? "[Blocked private IP content]" : await frame.content();
           const owner = await frame.frameElement();
           await owner.evaluate((el, args) => {
-            const { html, blocked } = args as { html: string; blocked: boolean };
-            (el as Element).setAttribute("srcdoc", html);
-            (el as Element).removeAttribute("src");
-            if (blocked) {
-              (el as Element).setAttribute("data-private-src-blocked", "true");
-            }
-          }, { html: htmlString, blocked });
+            const { html } = args as { html: string };
+            (el as Element).innerHTML = html;
+          }, { html: htmlString });
         }
       }
       let html = await page.content();

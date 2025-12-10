@@ -61,7 +61,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             include_iframes: {
               type: "boolean",
               description:
-                "Inline iframe contents into the corresponding <iframe> via srcdoc. Cross-origin frames are supported; frames from private IPs are marked and their content is blocked.",
+                "Embed child frame HTML directly into the corresponding <iframe> element content (no attribute changes). Cross-origin frames are supported; frames from private IPs are replaced with placeholder content.",
             },
           },
           required: ["url"],
