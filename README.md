@@ -23,7 +23,7 @@
     - `start_index`（number，可选）：从该字符索引开始返回内容，默认 `0`
     - `wait_ms`（number，可选）：页面加载完成后额外等待的毫秒数，用于等待客户端渲染，默认 `2000`
     - `simplify`（boolean，可选）：是否启用精简模式，默认 `false`
-    - `include_iframes`（boolean，可选）：是否将子 frame 的 HTML 内联到对应 `<iframe>` 元素（通过 `srcdoc`），并移除其 `src`；私网 frame 内容会阻断并打标
+    - `include_iframes`（boolean，可选）：是否把每个 `<iframe>` 的页面内容直接放回这个 `iframe` 元素里，方便一次性查看完整页面。实现方式是将子页面 HTML 写入 `srcdoc` 并移除 `src`；跨域 `iframe` 也支持。若子页面指向私网地址，则不抓取真实内容，改为写入占位文本并在元素上打标。默认 `false`
   - 返回：`{ content: [{ type: "text", text: "<html>...</html>" }], isError: false }`
 
 ## 安全
@@ -57,6 +57,15 @@
   }
 }
 ```
+
+### 参数默认值速览
+
+- `headers`：不设置（可选）
+- `max_length`：默认 `DEFAULT_LIMIT`（环境变量，默认 `5000`；设为 `0` 表示不限制）
+- `start_index`：默认 `0`
+- `wait_ms`：默认 `2000`
+- `simplify`：默认 `false`
+- `include_iframes`：默认 `false`
 
 ## 环境变量
 
