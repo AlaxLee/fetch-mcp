@@ -15,7 +15,7 @@ export class Fetcher {
 
   static async rendered_html(requestPayload: RequestPayload) {
     try {
-      const { url, headers, max_length, start_index, wait_ms, simplify } = requestPayload;
+      const { url, headers, max_length, start_index, wait_ms, simplify, include_iframes } = requestPayload;
       if (is_ip_private(url)) {
         throw new Error(
           `Fetcher blocked an attempt to fetch a private IP ${url}. This is to prevent a security vulnerability where a local MCP could fetch privileged local IPs and exfiltrate data.`,
@@ -62,6 +62,55 @@ export class Fetcher {
             }
           });
         });
+        // Also apply simplification inside frames
+        for (const frame of page.frames()) {
+          if (frame === page.mainFrame()) continue;
+          try {
+            await frame.evaluate(() => {
+              const SUFFIX = "...后续已忽略";
+              document.querySelectorAll("script").forEach((el) => {
+                const t = el.textContent || "";
+                if (t.length > 100) {
+                  el.textContent = t.slice(0, 100) + SUFFIX;
+                }
+              });
+              document.querySelectorAll("style").forEach((el) => {
+                const t = el.textContent || "";
+                if (t.length > 100) {
+                  el.textContent = t.slice(0, 100) + SUFFIX;
+                }
+              });
+              document.querySelectorAll("*").forEach((el) => {
+                const attrs = (el as Element).attributes;
+                for (let i = 0; i < attrs.length; i++) {
+                  const a = attrs[i];
+                  const v = a.value || "";
+                  if (v.length > 1000) {
+                    (el as Element).setAttribute(a.name, v.slice(0, 100) + SUFFIX);
+                  }
+                }
+              });
+            });
+          } catch {}
+        }
+      }
+
+      if (include_iframes) {
+        for (const frame of page.frames()) {
+          if (frame === page.mainFrame()) continue;
+          const frameUrl = frame.url();
+          const blocked = is_ip_private(frameUrl);
+          const htmlString = blocked ? "[Blocked private IP content]" : await frame.content();
+          const owner = await frame.frameElement();
+          await owner.evaluate((el, args) => {
+            const { html, blocked } = args as { html: string; blocked: boolean };
+            (el as Element).setAttribute("srcdoc", html);
+            (el as Element).removeAttribute("src");
+            if (blocked) {
+              (el as Element).setAttribute("data-private-src-blocked", "true");
+            }
+          }, { html: htmlString, blocked });
+        }
       }
       let html = await page.content();
       await browser.close();

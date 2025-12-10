@@ -58,6 +58,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               description:
                 "Enable simplification: truncate inline <script> content to 100 chars and any attribute value longer than 1000 chars to 100 chars, appending '...后续已忽略'",
             },
+            include_iframes: {
+              type: "boolean",
+              description:
+                "Inline iframe contents into the corresponding <iframe> via srcdoc. Cross-origin frames are supported; frames from private IPs are marked and their content is blocked.",
+            },
           },
           required: ["url"],
         },

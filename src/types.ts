@@ -9,6 +9,7 @@ export const RequestPayloadSchema = z.object({
   start_index: z.number().int().min(0).optional().default(0),
   wait_ms: z.number().int().min(0).optional().default(2000),
   simplify: z.boolean().optional().default(false),
+  include_iframes: z.boolean().optional().default(false),
 });
 
 // Make sure TypeScript treats the fields as optional with defaults
@@ -19,4 +20,5 @@ export type RequestPayload = {
   start_index?: number;
   wait_ms?: number;
   simplify?: boolean;
+  include_iframes?: boolean;
 };
