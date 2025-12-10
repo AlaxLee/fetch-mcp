@@ -34,6 +34,25 @@ describe("Fetcher", () => {
       });
     });
 
+    it("should run simplification when simplify is true", async () => {
+      const pageContent = "<html><body><script>var a='x'.repeat(5000)</script><div data-long='x'.repeat(5001)>Rendered</div></body></html>";
+      const evaluate = jest.fn().mockResolvedValueOnce(undefined);
+      (chromium.launch as jest.Mock).mockResolvedValueOnce({
+        newContext: jest.fn().mockResolvedValueOnce({
+          newPage: jest.fn().mockResolvedValueOnce({
+            goto: jest.fn().mockResolvedValueOnce(undefined),
+            waitForTimeout: jest.fn().mockResolvedValueOnce(undefined),
+            evaluate,
+            content: jest.fn().mockResolvedValueOnce(pageContent),
+          }),
+        }),
+        close: jest.fn().mockResolvedValueOnce(undefined),
+      });
+
+      await Fetcher.rendered_html({ url: "https://example.com", simplify: true });
+      expect(evaluate).toHaveBeenCalledTimes(1);
+    });
+
     it("should handle errors from playwright", async () => {
       (chromium.launch as jest.Mock).mockRejectedValueOnce(new Error("Browser error"));
       const result = await Fetcher.rendered_html({ url: "https://example.com" });

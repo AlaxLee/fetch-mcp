@@ -8,6 +8,7 @@ export const RequestPayloadSchema = z.object({
   max_length: z.number().int().min(0).optional().default(downloadLimit),
   start_index: z.number().int().min(0).optional().default(0),
   wait_ms: z.number().int().min(0).optional().default(2000),
+  simplify: z.boolean().optional().default(false),
 });
 
 // Make sure TypeScript treats the fields as optional with defaults
@@ -17,4 +18,5 @@ export type RequestPayload = {
   max_length?: number;
   start_index?: number;
   wait_ms?: number;
+  simplify?: boolean;
 };

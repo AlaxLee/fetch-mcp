@@ -22,6 +22,7 @@
     - `max_length`（number，可选）：返回内容最大字符数，默认从环境变量控制（默认 5000，`0` 表示不限制）
     - `start_index`（number，可选）：从该字符索引开始返回内容，默认 `0`
     - `wait_ms`（number，可选）：页面加载完成后额外等待的毫秒数，用于等待客户端渲染，默认 `2000`
+    - `simplify`（boolean，可选）：是否启用精简模式，默认 `false`
   - 返回：`{ content: [{ type: "text", text: "<html>...</html>" }], isError: false }`
 
 ## 安全
@@ -37,6 +38,23 @@
 4. 运行：`npm start`
 
 服务器通过 stdio 提供 MCP 能力。
+
+### 示例调用（工具入参）
+
+客户端调用工具 `fetch_rendered_html` 时，传参示例：
+
+```json
+{
+  "name": "fetch_rendered_html",
+  "arguments": {
+    "url": "https://example.com",
+    "simplify": true,
+    "wait_ms": 2000,
+    "max_length": 50000,
+    "start_index": 0
+  }
+}
+```
 
 ## 环境变量
 
@@ -66,7 +84,17 @@
 
 - 使用 Playwright 的 Chromium 渲染并返回页面 HTML
 - 支持自定义请求头、长度与起始位置控制、渲染后额外等待（`wait_ms`）
+- 可选精简模式：截断脚本与超长属性值，降低返回体大小
 - 阻止私有 IP 访问，提升安全性
+
+## 精简模式说明（`simplify: true`）
+
+启用后在浏览器端对当前 DOM 进行以下精简，再返回 HTML：
+
+- `<script>` 内联内容仅保留前 100 个字符，后面追加 `...后续已忽略`
+- 所有元素的属性值长度超过 1000 时，仅保留前 100 个字符，后面追加 `...后续已忽略`
+
+精简在渲染完成与额外等待（`wait_ms`）之后执行，随后再获取页面内容并应用 `max_length` 与 `start_index` 截断。
 
 ## 依赖与浏览器安装提示
 

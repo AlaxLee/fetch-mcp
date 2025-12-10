@@ -15,7 +15,7 @@ export class Fetcher {
 
   static async rendered_html(requestPayload: RequestPayload) {
     try {
-      const { url, headers, max_length, start_index, wait_ms } = requestPayload;
+      const { url, headers, max_length, start_index, wait_ms, simplify } = requestPayload;
       if (is_ip_private(url)) {
         throw new Error(
           `Fetcher blocked an attempt to fetch a private IP ${url}. This is to prevent a security vulnerability where a local MCP could fetch privileged local IPs and exfiltrate data.`,
@@ -32,6 +32,29 @@ export class Fetcher {
       const extraWait = typeof wait_ms === "number" ? wait_ms : 2000;
       if (extraWait > 0) {
         await page.waitForTimeout(extraWait);
+      }
+      if (simplify) {
+        await page.evaluate(() => {
+          const SUFFIX = "...后续已忽略";
+          // Truncate inline script content to 100 characters
+          document.querySelectorAll("script").forEach((el) => {
+            const t = el.textContent || "";
+            if (t.length > 100) {
+              el.textContent = t.slice(0, 100) + SUFFIX;
+            }
+          });
+          // Truncate attribute values longer than 1000 characters to 100 characters
+          document.querySelectorAll("*").forEach((el) => {
+            const attrs = (el as Element).attributes;
+            for (let i = 0; i < attrs.length; i++) {
+              const a = attrs[i];
+              const v = a.value || "";
+              if (v.length > 1000) {
+                (el as Element).setAttribute(a.name, v.slice(0, 100) + SUFFIX);
+              }
+            }
+          });
+        });
       }
       let html = await page.content();
       await browser.close();

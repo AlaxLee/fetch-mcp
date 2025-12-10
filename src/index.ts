@@ -53,6 +53,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: "number",
               description: "Extra wait after load in milliseconds (default: 2000)",
             },
+            simplify: {
+              type: "boolean",
+              description:
+                "Enable simplification: truncate inline <script> content to 100 chars and any attribute value longer than 1000 chars to 100 chars, appending '...后续已忽略'",
+            },
           },
           required: ["url"],
         },
